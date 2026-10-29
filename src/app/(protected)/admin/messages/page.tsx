@@ -1,29 +1,52 @@
+import { Suspense } from "react";
+import { connection } from "next/server";
 import { auth } from "@/auth";
-import {getContacts} from "@/actions/contact-action";
-import SingleContact from "@/components/SingleContact";
+import { getContacts } from "@/actions/contact-action";
+import AdminMessagesTable from "@/components/admin/AdminMessagesTable";
+import AdminPageSkeleton from "@/components/admin/AdminPageSkeleton";
 import { Metadata } from "next";
+
 export const metadata: Metadata = {
-  title: "contacts List",
+  title: "Messages | Admin",
 };
-const AdminPage = async () => {
-  const contacts = await getContacts();
+
+export default function MessagesPage() {
+  return (
+    <Suspense fallback={<AdminPageSkeleton label="messages" />}>
+      <AdminMessagesContent />
+    </Suspense>
+  );
+}
+
+async function AdminMessagesContent() {
+  await connection();
   const session = await auth();
-const contact = session?.user;
-  console.log(session);
 
   if (session?.user?.role !== "ADMIN") {
-    return <div>No eres administrador</div>;
+    return (
+      <main className="page-frame section-page">
+        <h1 className="mb-3 text-3xl font-semibold">Admin access required</h1>
+        <p className="text-[var(--muted)]">
+          Sign in with an administrator account to view messages.
+        </p>
+      </main>
+    );
   }
 
+  const contacts = await getContacts();
+
   return (
-    <div className="mx-auto max-w-fit">
-    <h1>Messages List</h1>
-<div className="grid xs:grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-4 ">
-    {contacts.map((item: any) => ( contact &&
-          (<SingleContact key={item.id} data={item} />)
-        ))}
-    </div>
-  </div>
+    <main className="page-frame section-page">
+      <header className="section-intro">
+        <div>
+          <h1>Messages</h1>
+          <p>Read and manage messages sent through the contact form.</p>
+        </div>
+        <p className="m-0 rounded-[var(--radius)] border border-[var(--line)] bg-[var(--paper-raised)] px-3 py-2 text-sm text-[var(--muted)]">
+          {contacts.length} {contacts.length === 1 ? "message" : "messages"}
+        </p>
+      </header>
+      <AdminMessagesTable contacts={contacts} />
+    </main>
   );
-};
-export default AdminPage;
+}

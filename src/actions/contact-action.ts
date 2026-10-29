@@ -1,22 +1,26 @@
 "use server";
 
-import { IContact } from "@/interfaces";
 import { PrismaClient } from "@prisma/client";
+import { auth } from "@/auth";
 import { revalidatePath } from "next/cache";
 
 const prisma = new PrismaClient();
 
-export const getContacts = async () => {
-  try {
-    return await prisma.contact.findMany({
-      
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
-  } catch (error) {
-    throw new Error("Something went wrong");
+async function requireAdmin() {
+  const session = await auth();
+  if (session?.user?.role !== "ADMIN") {
+    throw new Error("Unauthorized");
   }
+}
+
+export const getContacts = async () => {
+  await requireAdmin();
+
+  return prisma.contact.findMany({
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
 };
 export const createContactAction = async ({
   postername,
@@ -31,20 +35,17 @@ export const createContactAction = async ({
   message: string,
 
 }): Promise<void> => {
-  try {
-    await prisma.contact.create({
-      data: {
-        postername,
-        email,
-        topic,
-        message,
-      },
-    });
+  await prisma.contact.create({
+    data: {
+      postername,
+      email,
+      topic,
+      message,
+    },
+  });
 
-    revalidatePath("/");
-  } catch (error) {
-    throw new Error("Something went wrong");
-  }
+  revalidatePath("/");
+  revalidatePath("/admin/messages");
 };
 
 export const deleteContact = async ({
@@ -52,11 +53,13 @@ export const deleteContact = async ({
 }: {
   id: string;
 }): Promise<void> => {
+  await requireAdmin();
+
   await prisma.contact.delete({
     where: {
       id,
     },
   });
 
-  revalidatePath("/");
+  revalidatePath("/admin/messages");
 };
