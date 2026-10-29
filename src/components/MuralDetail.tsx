@@ -244,9 +244,9 @@ export default function MuralDetail({ mural, currentUserId }: MuralDetailProps) 
             </Link>
           ) : (
             <p className="mural-author mural-author--unavailable">
-              <span className="mural-author-label">Artist profile</span>
-              <strong>Unavailable</strong>
-            </p>
+              <span className="mural-author-label">Artist details
+             <strong><a href={comments[0]?.content}>{comments[0]?.content|| "Unavailable"}</a></strong></span>
+           </p>
           )}
 
           <section
