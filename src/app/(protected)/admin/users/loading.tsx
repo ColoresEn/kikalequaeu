@@ -1,9 +1,5 @@
-import React from 'react'
+import AdminPageSkeleton from "@/components/admin/AdminPageSkeleton";
 
-function LoadingPage() {
-  return (
-    <div><h1>Loading ...</h1></div>
-  )
+export default function LoadingUsersPage() {
+  return <AdminPageSkeleton label="users" />;
 }
-
-export default LoadingPage
