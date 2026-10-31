@@ -243,10 +243,10 @@ export default function MuralDetail({ mural, currentUserId }: MuralDetailProps) 
               <ArrowUpRight className="mural-author-arrow" aria-hidden="true" />
             </Link>
           ) : (
-            <p className="mural-author mural-author--unavailable">
-              <span className="mural-author-label">Artist profile</span>
-              <strong>Unavailable</strong>
-            </p>
+             <p className="mural-author mural-author--unavailable">
+              <span className="mural-author-label">Visit
+             <strong><a href={comments[0]?.content}>{comments[0]?.content|| "Unavailable"}</a></strong></span>
+           </p>
           )}
 
           <section
