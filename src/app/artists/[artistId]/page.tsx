@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import { ArrowLeft } from "lucide-react";
 import { db } from "@/lib/db";
 
@@ -8,8 +9,22 @@ interface ArtistPageProps {
   params: Promise<{ artistId: string }>;
 }
 
-export default async function ArtistPage({ params }: ArtistPageProps) {
-  const { artistId } = await params;
+export default function ArtistPage({ params }: ArtistPageProps) {
+  return (
+    <main className="page-frame artist-page">
+      <Link className="artist-back-link" href="/murals">
+        <ArrowLeft aria-hidden="true" /> Back to murals
+      </Link>
+      <Suspense fallback={<ArtistLoading />}>
+        {params.then(({ artistId }) => (
+          <ArtistContent artistId={artistId} />
+        ))}
+      </Suspense>
+    </main>
+  );
+}
+
+async function ArtistContent({ artistId }: { artistId: string }) {
   if (!/^[a-f\d]{24}$/i.test(artistId)) notFound();
 
   const artist = await db.user.findUnique({
@@ -28,10 +43,7 @@ export default async function ArtistPage({ params }: ArtistPageProps) {
   if (!artist) notFound();
 
   return (
-    <main className="page-frame artist-page">
-      <Link className="artist-back-link" href="/murals">
-        <ArrowLeft aria-hidden="true" /> Back to murals
-      </Link>
+    <>
       <header className="artist-heading">
         {artist.image ? (
           <Image
@@ -85,6 +97,14 @@ export default async function ArtistPage({ params }: ArtistPageProps) {
           <p className="empty-state">No murals have been shared yet.</p>
         )}
       </section>
-    </main>
+    </>
+  );
+}
+
+function ArtistLoading() {
+  return (
+    <p className="empty-state" role="status">
+      Loading artist...
+    </p>
   );
 }
