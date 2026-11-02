@@ -3,25 +3,21 @@
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import React, { ChangeEvent, FormEvent, useState } from "react";
-import Image from "next/image";
 import ImageUpload from "./ImageUpload";
-import Input from "./input/Input";
 import { toast } from "react-hot-toast";
 
 interface BlogProps {
   name?: string;
   description?: string;
-  imageSrc?: any;
+  imageSrc?: string;
   blogId?: string;
 }
 
-interface InitalStateProps {
+interface MuralState {
   name: string;
   description: string;
   imageSrc: string;
 }
-
-
 
 export default function BlogId({
   name,
@@ -30,126 +26,86 @@ export default function BlogId({
   blogId,
 }: BlogProps) {
   const router = useRouter();
-  const [onActive, setOnActive] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const initialState = {
-    name,
-    description,
-    imageSrc,
-  };
-  const [state, setState] = useState(initialState);
+  const [state, setState] = useState<MuralState>({
+    name: name ?? "",
+    description: description ?? "",
+    imageSrc: imageSrc ?? "",
+  });
 
-  function handleChange(event: ChangeEvent<HTMLInputElement>) {
+  function handleChange(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
     setState({ ...state, [event.target.name]: event.target.value });
   }
 
-  const onSubmit = (event: FormEvent) => {
-    setIsLoading(true);
-
+  const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    axios
-      .put(`/api/blogs/${blogId}`, state)
-      .then(() => {
-        toast.success("Updated Successfully");
-        router.refresh();
-        router.push("/");
-      })
+    if (!blogId) {
+      toast.error("This mural could not be found.");
+      return;
+    }
 
-      .catch((err) => {
-        throw new Error(err);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+    setIsLoading(true);
+    try {
+      await axios.put(`/api/murals/${blogId}`, state);
+      toast.success("Mural updated.");
+      router.push(`/murals/${blogId}`);
+      router.refresh();
+    } catch (error) {
+      console.error("Could not update mural:", error);
+      const message = axios.isAxiosError<{ error?: string }>(error)
+        ? error.response?.data?.error
+        : undefined;
+      toast.error(message ?? "The mural could not be updated. Try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const onDelete = (event: FormEvent) => {
-    setIsLoading(true);
-
-    event.preventDefault();
-    axios
-      .delete(`/api/blogs/${blogId}`)
-      .then(() => {
-        toast.success("Updated Successfully");
-        router.refresh();
-        router.push("/");
-      })
-
-      .catch((err) => {
-        throw new Error(err);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  };
-  console.log('imageSrc', imageSrc)
-  const setCustomValue = (id: any, value: any) => {
-    setState((prevValues) => ({
-      ...prevValues,
-      [id]: value,
-    }));
+  const setImage = (value: string) => {
+    setState((previous) => ({ ...previous, imageSrc: value }));
   };
 
   return (
-    <div className="w-[500px] m-5 mx-auto py-8 bg-zinc-900 px-6 flex flex-col gap-4">
-     
-      <div className="flex justify-center gap-2">
-        <button onClick={() => setOnActive(!onActive)} className="uppercase">
-          edit
+    <form className="editor-form" onSubmit={onSubmit}>
+      <ImageUpload value={state.imageSrc} onChange={setImage} />
+      <div>
+        <label htmlFor="mural-name">Artist or tag</label>
+        <input
+          id="mural-name"
+          type="text"
+          value={state.name}
+          name="name"
+          placeholder="Artist, crew or title"
+          onChange={handleChange}
+          maxLength={120}
+          required
+        />
+      </div>
+      <div>
+        <label htmlFor="mural-description">Location or note</label>
+        <textarea
+          id="mural-description"
+          value={state.description}
+          name="description"
+          placeholder="Where is the wall? What should people know?"
+          onChange={handleChange}
+          maxLength={2000}
+          required
+        />
+      </div>
+      <div className="editor-actions">
+        <button className="editor-submit" type="submit" disabled={isLoading || !state.imageSrc}>
+          {isLoading ? "Saving..." : "Save changes"}
         </button>
-        <button disabled={isLoading} className="uppercase" onClick={onDelete}>
-          Delete
+        <button
+          className="editor-cancel"
+          type="button"
+          onClick={() => router.push(blogId ? `/murals/${blogId}` : "/murals")}
+          disabled={isLoading}
+        >
+          Cancel
         </button>
       </div>
-
-      {onActive && (
-        <form onSubmit={onSubmit}>
-          <div className="m-8">
-            <ImageUpload
-              value={state.imageSrc}
-              onChange={(value) => setCustomValue("imageSrc", value)}
-            />
-          </div>
-          <div className="flex flex-col justify-center  w-[350px] mx-auto gap-2">
-            <Input
-              placeholder="Name"
-              id="name"
-              type="text"
-              value={state.name}
-              name="name"
-              onChange={handleChange}
-            />
-            <Input
-              placeholder="Description"
-              id="description"
-              type="text"
-              value={state.description}
-              name="description"
-              onChange={handleChange}
-            />
-            <div></div>
-            <div className="flex justify-end ">
-              <button
-                type="submit"
-                className=" btn btn-primary"
-                disabled={isLoading}
-              >
-                Submit
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  router.push("/murals");
-                }}
-                className=" btn btn-secondary"
-                disabled={isLoading}
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        </form>
-      )}
-    </div>
+    </form>
   );
 }

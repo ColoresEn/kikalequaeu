@@ -56,7 +56,7 @@ export default function SingleBlog({ data, currentUser, preload = false }: BlogP
             </button>
             <button
               type="button"
-              onClick={() => router.push(`/blogs/${data.id}`)}
+              onClick={() => router.push(`/murals/${data.id}/edit`)}
               aria-label="Edit mural"
             >
               <BsFillPencilFill aria-hidden="true" />
