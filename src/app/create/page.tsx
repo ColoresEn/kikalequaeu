@@ -27,13 +27,16 @@ export default function CreatePage() {
     event.preventDefault();
     setIsLoading(true);
     try {
-      await axios.post("/api/blogs", state);
+      await axios.post("/api/murals", state);
       toast.success("Wall shared");
       router.refresh();
       router.push("/");
     } catch (error) {
       console.error("Could not share wall:", error);
-      toast.error("Your post could not be saved. Check your connection and try again.");
+      const message = axios.isAxiosError<{ error?: string }>(error)
+        ? error.response?.data?.error
+        : undefined;
+      toast.error(message ?? "Your post could not be saved. Check your connection and try again.");
     } finally {
       setIsLoading(false);
     }
