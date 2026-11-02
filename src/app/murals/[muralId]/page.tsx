@@ -58,6 +58,7 @@ async function MuralDetailContent({ params }: MuralDetailPageProps) {
           name: mural.name,
           description: mural.description,
           imageSrc: mural.imageSrc,
+          visitUrl: mural.visitUrl,
           likedIds: mural.likedIds,
           author,
           comments: mural.comments.map((comment) => ({

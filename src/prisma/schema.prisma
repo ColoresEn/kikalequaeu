@@ -103,6 +103,7 @@ model Listing {
   createdAt DateTime @default(now())
   imageSrc String
   description String
+  visitUrl String?
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String @db.ObjectId
   likedIds String[]  @db.ObjectId

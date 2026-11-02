@@ -10,12 +10,14 @@ interface PostState {
   name: string;
   imageSrc: string;
   description: string;
+  visitUrl: string;
 }
 
 const initialState: PostState = {
   name: "",
   imageSrc: "",
   description: "",
+  visitUrl: "",
 };
 
 export default function CreatePage() {
@@ -27,13 +29,16 @@ export default function CreatePage() {
     event.preventDefault();
     setIsLoading(true);
     try {
-      await axios.post("/api/blogs", state);
+      await axios.post("/api/murals", state);
       toast.success("Wall shared");
       router.refresh();
       router.push("/");
     } catch (error) {
       console.error("Could not share wall:", error);
-      toast.error("Your post could not be saved. Check your connection and try again.");
+      const message = axios.isAxiosError<{ error?: string }>(error)
+        ? error.response?.data?.error
+        : undefined;
+      toast.error(message ?? "Your post could not be saved. Check your connection and try again.");
     } finally {
       setIsLoading(false);
     }
@@ -76,6 +81,18 @@ export default function CreatePage() {
               placeholder="Where is the wall? What should people know?"
               onChange={handleChange}
               required
+            />
+          </div>
+          <div>
+            <label htmlFor="visitUrl">Artist website or Instagram (optional)</label>
+            <input
+              id="visitUrl"
+              type="url"
+              value={state.visitUrl}
+              name="visitUrl"
+              placeholder="https://instagram.com/artist"
+              onChange={handleChange}
+              maxLength={2048}
             />
           </div>
           <button className="editor-submit" type="submit" disabled={isLoading || !state.imageSrc}>
