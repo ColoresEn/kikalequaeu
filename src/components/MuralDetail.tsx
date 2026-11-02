@@ -33,6 +33,7 @@ interface MuralDetailProps {
     name: string;
     description: string;
     imageSrc: string;
+    visitUrl: string | null;
     likedIds: string[];
     author: ArtistSummary | null;
     comments: MuralComment[];
@@ -221,7 +222,7 @@ export default function MuralDetail({ mural, currentUserId }: MuralDetailProps) 
           <h1>{mural.name}</h1>
           <p className="mural-description">{mural.description}</p>
 
-          {mural.author ? (
+          {mural.author && (
             <Link className="mural-author" href={`/artists/${mural.author.id}`}>
               {mural.author.image ? (
                 <Image
@@ -242,11 +243,18 @@ export default function MuralDetail({ mural, currentUserId }: MuralDetailProps) 
               </span>
               <ArrowUpRight className="mural-author-arrow" aria-hidden="true" />
             </Link>
-          ) : (
-            <p className="mural-author mural-author--unavailable">
-              <span className="mural-author-label">Visit
-             <strong><a href={comments[0]?.content}>{comments[0]?.content|| "Unavailable"}</a></strong></span>
-           </p>
+          )}
+          {mural.visitUrl && (
+            <a
+              className="mural-visit-link"
+              href={mural.visitUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span className="mural-author-label">Visit</span>
+              <strong>{mural.visitUrl}</strong>
+              <ArrowUpRight className="mural-author-arrow" aria-hidden="true" />
+            </a>
           )}
 
           <section

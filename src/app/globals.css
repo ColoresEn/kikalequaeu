@@ -1056,6 +1056,27 @@ p {
   text-decoration: none;
 }
 
+.mural-visit-link {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.mural-visit-link strong {
+  overflow-wrap: anywhere;
+  font-size: 0.95rem;
+}
+
+.mural-visit-link:hover strong {
+  color: var(--blue-deep);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 .mural-author:hover strong,
 .mural-comment-meta a:hover {
   color: var(--blue-deep);

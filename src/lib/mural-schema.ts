@@ -16,4 +16,13 @@ export const muralSchema = z.object({
       (value) => value.startsWith("https://res.cloudinary.com/www-qepweb-es/image/upload/"),
       "Upload the image using the image uploader.",
     ),
+  visitUrl: z.union([
+    z.literal(""),
+    z
+      .string()
+      .trim()
+      .url("Enter a valid website or Instagram URL.")
+      .max(2048, "The website or Instagram URL is too long.")
+      .refine((value) => value.startsWith("https://"), "The link must use HTTPS."),
+  ]).optional(),
 });

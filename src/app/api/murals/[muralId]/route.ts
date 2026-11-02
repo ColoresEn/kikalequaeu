@@ -45,7 +45,10 @@ export async function PUT(
 
   await db.listing.update({
     where: { id: muralId },
-    data: parsedBody.data,
+    data: {
+      ...parsedBody.data,
+      visitUrl: parsedBody.data.visitUrl || null,
+    },
   });
 
   return NextResponse.json({ id: muralId });

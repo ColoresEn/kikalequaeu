@@ -10,6 +10,7 @@ interface BlogProps {
   name?: string;
   description?: string;
   imageSrc?: string;
+  visitUrl?: string | null;
   blogId?: string;
 }
 
@@ -17,12 +18,14 @@ interface MuralState {
   name: string;
   description: string;
   imageSrc: string;
+  visitUrl: string;
 }
 
 export default function BlogId({
   name,
   description,
   imageSrc,
+  visitUrl,
   blogId,
 }: BlogProps) {
   const router = useRouter();
@@ -31,6 +34,7 @@ export default function BlogId({
     name: name ?? "",
     description: description ?? "",
     imageSrc: imageSrc ?? "",
+    visitUrl: visitUrl ?? "",
   });
 
   function handleChange(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
@@ -91,6 +95,18 @@ export default function BlogId({
           onChange={handleChange}
           maxLength={2000}
           required
+        />
+      </div>
+      <div>
+        <label htmlFor="mural-visit-url">Artist website or Instagram (optional)</label>
+        <input
+          id="mural-visit-url"
+          type="url"
+          value={state.visitUrl}
+          name="visitUrl"
+          placeholder="https://instagram.com/artist"
+          onChange={handleChange}
+          maxLength={2048}
         />
       </div>
       <div className="editor-actions">

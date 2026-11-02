@@ -29,6 +29,7 @@ export async function POST(request: Request) {
   const mural = await db.listing.create({
     data: {
       ...parsedBody.data,
+      visitUrl: parsedBody.data.visitUrl || null,
       userId,
       likedIds: [],
     },
