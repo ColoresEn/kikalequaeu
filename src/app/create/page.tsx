@@ -10,12 +10,14 @@ interface PostState {
   name: string;
   imageSrc: string;
   description: string;
+  visitUrl: string;
 }
 
 const initialState: PostState = {
   name: "",
   imageSrc: "",
   description: "",
+  visitUrl: "",
 };
 
 export default function CreatePage() {
@@ -79,6 +81,18 @@ export default function CreatePage() {
               placeholder="Where is the wall? What should people know?"
               onChange={handleChange}
               required
+            />
+          </div>
+          <div>
+            <label htmlFor="visitUrl">Artist website or Instagram (optional)</label>
+            <input
+              id="visitUrl"
+              type="url"
+              value={state.visitUrl}
+              name="visitUrl"
+              placeholder="https://instagram.com/artist"
+              onChange={handleChange}
+              maxLength={2048}
             />
           </div>
           <button className="editor-submit" type="submit" disabled={isLoading || !state.imageSrc}>

@@ -46,6 +46,7 @@ async function BlogPage({ params }: AdminMuralPageProps) {
           description={blog.description}
           blogId={blog.id}
           imageSrc={blog.imageSrc}
+          visitUrl={blog.visitUrl}
         />
       </section>
     </main>

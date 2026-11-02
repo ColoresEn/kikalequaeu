@@ -39,7 +39,7 @@ async function EditMuralContent({ params }: EditMuralPageProps) {
 
   const mural = await db.listing.findUnique({
     where: { id: muralId },
-    select: { id: true, name: true, description: true, imageSrc: true, userId: true },
+    select: { id: true, name: true, description: true, imageSrc: true, visitUrl: true, userId: true },
   });
 
   if (!mural || (mural.userId !== userId && session.user?.role !== "ADMIN")) {
@@ -55,6 +55,7 @@ async function EditMuralContent({ params }: EditMuralPageProps) {
           name={mural.name}
           description={mural.description}
           imageSrc={mural.imageSrc}
+          visitUrl={mural.visitUrl}
           blogId={mural.id}
         />
       </section>
