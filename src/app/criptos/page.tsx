@@ -99,6 +99,7 @@ function CriptosPage() {
                       width={32}
                       height={32}
                       unoptimized
+                      className="w-auto max-h-7"
                     />
                     <span>{coin.name}</span>
                   </td>

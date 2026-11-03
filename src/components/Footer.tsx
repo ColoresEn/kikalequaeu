@@ -2,12 +2,11 @@ import Link from 'next/link';
 
 const Footer = () => {
   return (
-    <footer className="site-footer">
-      <span>Independent notes from the street and the market.</span>
-      <nav aria-label="Legal">
-        <Link href="/privacy-policy">Privacy</Link>
-        <Link href="/terms-of-service">Terms</Link>
-      </nav>
+     <footer style={{ padding: '20px', textAlign: 'center' }}>
+      <span>
+        <Link href="/privacy-policy">Política de Privacidad</Link> |{' '}
+        <Link href="/terms-of-service">Condiciones del Servicio</Link>
+      </span>
     </footer>
   );
 };

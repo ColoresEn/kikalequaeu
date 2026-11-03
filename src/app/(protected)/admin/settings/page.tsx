@@ -31,7 +31,7 @@ async function ProfilePage() {
   }
 
   return (
-    <div className="">
+    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       {currentUser?.name && (
         <div className="row">
           <div className="flex w-full md:my-6 md:max-w-2xl md:px-2 lg:max-w-4xl">
@@ -45,7 +45,7 @@ async function ProfilePage() {
                       width={200}
                       height={200}
                       priority
-                       className="object-cover object-center "
+                       className="w-auto h-auto object-cover object-center "
                     />
                   </div>
                   <div className="sm:col-span-8 lg:col-span-7 ">
