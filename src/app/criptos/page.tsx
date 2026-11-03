@@ -110,8 +110,18 @@ function CriptosPage() {
                       maximumSignificantDigits: 7,
                     }).format(coin.current_price)}
                   </td>
-                  <td className={coin.price_change_percentage_24h >= 0 ? "crypto-positive" : "crypto-negative"}>
-                    {coin.price_change_percentage_24h.toFixed(2)}%
+                  <td
+                    className={
+                      coin.price_change_percentage_24h === null
+                        ? undefined
+                        : coin.price_change_percentage_24h >= 0
+                          ? "crypto-positive"
+                          : "crypto-negative"
+                    }
+                  >
+                    {coin.price_change_percentage_24h === null
+                      ? "—"
+                      : `${coin.price_change_percentage_24h.toFixed(2)}%`}
                   </td>
                   <td>
                     {new Intl.NumberFormat("en-US", {
