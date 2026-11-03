@@ -63,10 +63,10 @@ export default function UserEditForm({
   };
 
   return (
-    <div className="md:rounded-2xl px-15 shadow-input text-right ">
+    <div className="md:rounded-2xl px-10 py-6 shadow-input text-right ">
       <Button
         onClick={() => setOnActive(!onActive)}
-        className="uppercase   pb-6 "
+        className="uppercase   p-6 "
       >edit</Button>
 
       {onActive && (

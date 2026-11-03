@@ -3,15 +3,13 @@ import { NextPage } from "next";
 
 const TermsOfService: NextPage = () => {
   return (
-    <div className="container bg-zinc-900 mt-5  p-6   shadow-md shadow-black -inset-40 block w-full h-full lg:w-3/4 mx-auto">
+    <div className="container mt-5  p-6   shadow-md shadow-black -inset-40 block w-full h-full lg:w-3/4 mx-auto">
     <div style={{ padding: "20px" }}>
       <h1>Condiciones del Servicio</h1>
       <p>
         De conformidad con lo establecido en el REGLAMENTO (UE) 2016/679 de
         protección de datos de carácter personal, le informamos que los datos
         que usted nos facilite serán incorporados al sistema de tratamiento
-        titularidad de ESOMA, S.L. con CIF B46134128 y domicilio social sito en
-        C/SANT FRANCESC DE BORJA, 50 de Gandía provincia de Valencia C.P.:46701,
         con la finalidad de FICHERO CREADO PARA EL CONTACTO, CONTROL Y
         ADMINISTRACION DE NUESTROS CLIENTES Y LA FINALIDAD DEL MISMO ES LA
         GESTION CONTABLE, FISCAL, ADMINISTRATIVA Y PUBLICIDAD.. Se procederá a
@@ -24,7 +22,7 @@ const TermsOfService: NextPage = () => {
         portabilidad y oposición al tratamiento de sus datos de carácter
         personal así como revocar el consentimiento prestado, dirigiendo su
         petición a la dirección postal indicada o al correo electrónico
-        parkingesoma@gmail.com y podrá dirigirse a la Autoridad de Control
+        blogencolores@gmail.com y podrá dirigirse a la Autoridad de Control
         competente para presentar la reclamación que considere oportuna.
       </p>
     </div>
