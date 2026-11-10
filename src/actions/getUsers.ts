@@ -1,17 +1,21 @@
+import { auth } from "@/auth";
 import { db } from "@/lib/db";
-import type { Role } from "@prisma/client";
-import { format } from "date-fns";
 
 export interface AdminUserSummary {
   id: string;
   name: string;
   email: string | null;
   image: string | null;
-  role: Role;
+  role: string;
   createdAt: string;
 }
 
 export default async function getUsers() {
+  const session = await auth();
+  if (session?.user?.role !== "ADMIN") {
+    throw new Error("Unauthorized");
+  }
+
   const users = await db.user.findMany({
     select: {
       id: true,
@@ -28,6 +32,6 @@ export default async function getUsers() {
 
   return users.map((user) => ({
     ...user,
-    createdAt: format(user.createdAt, "MMM d, yyyy"),
+    createdAt: user.createdAt.toISOString(),
   }));
 }

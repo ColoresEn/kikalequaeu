@@ -1,49 +1,36 @@
 "use server";
+
+import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { ITodo } from "@/interfaces";
 import { revalidatePath } from "next/cache";
 
+async function requireUserId() {
+  const session = await auth();
+  const userId = session?.user?.id;
 
+  if (!userId) {
+    throw new Error("Unauthorized");
+  }
 
-/**
- * Retrieves the todo list for a specific user.
- *
- * @param {Object} params - The parameters object.
- * @param {string | null} params.userId - The ID of the user whose todo list is to be retrieved.
- * @returns {Promise<Array<ITodo>>} - A promise that resolves to an array of todo items.
- * @throws {Error} - Throws an error if something goes wrong during the retrieval process.
- */
+  return userId;
+}
 
 export const getUserTodoListAction = async ({
   userId,
 }: {
   userId: string | null;
 }): Promise<Array<ITodo>> => {
-  try {
-    return await db.todo.findMany({
-      where: {
-        user_id: userId as string,
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
-  } catch (error) {
-    throw new Error("Something went wrong");
+  const currentUserId = await requireUserId();
+  if (userId !== currentUserId) {
+    throw new Error("Unauthorized");
   }
-};
 
-/**
- * Creates a new todo item.
- *
- * @param {Object} params - The parameters object.
- * @param {string} params.title - The title of the todo item.
- * @param {string | undefined} params.body - The body or description of the todo item.
- * @param {boolean} params.completed - Indicates whether the todo item is completed or not.
- * @param {string | null} params.userId - The ID of the user creating the todo item.
- * @returns {Promise<void>} - A promise that resolves when the todo item is successfully created.
- * @throws {Error} - Throws an error if something goes wrong during the creation process.
- */
+  return db.todo.findMany({
+    where: { user_id: currentUserId },
+    orderBy: { createdAt: "desc" },
+  });
+};
 
 export const createTodoAction = async ({
   title,
@@ -52,59 +39,45 @@ export const createTodoAction = async ({
   userId,
 }: {
   title: string;
-  body?: string | undefined;
+  body?: string;
   completed: boolean;
   userId: string | null;
 }): Promise<void> => {
-  try {
-    await db.todo.create({
-      data: {
-        title,
-        body,
-        completed,
-        user_id: userId as string,
-      },
-    });
-
-    revalidatePath("/");
-  } catch (error) {
-    throw new Error("Something went wrong");
+  const currentUserId = await requireUserId();
+  if (userId !== currentUserId) {
+    throw new Error("Unauthorized");
   }
-};
 
-/**
- * Deletes a todo item.
- *
- * @param {Object} params - The parameters object.
- * @param {string} params.id - The ID of the todo item to be deleted.
- * @returns {Promise<void>} - A promise that resolves when the todo item is successfully deleted.
- */
+  await db.todo.create({
+    data: {
+      title,
+      body,
+      completed,
+      user_id: currentUserId,
+    },
+  });
+
+  revalidatePath("/admin/todos");
+  revalidatePath("/admin/dashboard");
+};
 
 export const deleteTodoAction = async ({
   id,
 }: {
   id: string;
 }): Promise<void> => {
-  await db.todo.delete({
-    where: {
-      id,
-    },
+  const userId = await requireUserId();
+  const result = await db.todo.deleteMany({
+    where: { id, user_id: userId },
   });
 
-  revalidatePath("/");
-};
+  if (result.count === 0) {
+    throw new Error("Todo not found");
+  }
 
-/**
- * Updates a todo item.
- *
- * @param {ITodo} params - The parameters object containing the todo item details.
- * @param {string} params.id - The ID of the todo item to be updated.
- * @param {string} params.title - The updated title of the todo item.
- * @param {string | undefined} params.body - The updated body or description of the todo item.
- * @param {boolean} params.completed - Indicates whether the todo item is completed or not.
- * @returns {Promise<void>} - A promise that resolves when the todo item is successfully updated.
- * @throws {Error} - Throws an error if something goes wrong during the update process.
- */
+  revalidatePath("/admin/todos");
+  revalidatePath("/admin/dashboard");
+};
 
 export const updateTodoAction = async ({
   id,
@@ -112,20 +85,16 @@ export const updateTodoAction = async ({
   body,
   completed,
 }: ITodo): Promise<void> => {
-  try {
-    await db.todo.update({
-      where: {
-        id,
-      },
-      data: {
-        title,
-        body,
-        completed,
-      },
-    });
+  const userId = await requireUserId();
+  const result = await db.todo.updateMany({
+    where: { id, user_id: userId },
+    data: { title, body, completed },
+  });
 
-    revalidatePath("/");
-  } catch (error) {
-    throw new Error("Something went wrong");
+  if (result.count === 0) {
+    throw new Error("Todo not found");
   }
+
+  revalidatePath("/admin/todos");
+  revalidatePath("/admin/dashboard");
 };

@@ -18,8 +18,7 @@ export const todoFormSchema = z.object({
   completed: z.boolean(),
 });
 
-export type TodoFormInputValues = z.input<typeof todoFormSchema>;
-export type TodoFormValues = z.output<typeof todoFormSchema>;
+export type TodoFormValues = z.infer<typeof todoFormSchema>;
 
 
 export const contactFormSchema = z.object({

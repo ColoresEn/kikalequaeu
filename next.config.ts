@@ -26,6 +26,21 @@ const nextConfig: NextConfig = {
         hostname: "assets.coingecko.com",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "avatars.githubusercontent.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "images-assets.nasa.gov",
+        pathname: "/**",
+      }
     ],
   },
   turbopack: {
